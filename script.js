@@ -4,6 +4,7 @@ import puppeteer from "puppeteer-core";
   // Launch the browser and open a new blank page
   const browser = await puppeteer.launch({
     executablePath: "/usr/bin/google-chrome-stable",
+    userDataDir: "./session-data",
     headless: false,
     defaultViewport: null,
     args: ["--start-maximized"],
@@ -50,40 +51,51 @@ import puppeteer from "puppeteer-core";
     editableBody.innerHTML =
       "Virginia Wushu Club practices for competition and performances.";
   });
-})();
 
-/*
-
-  await page.locator('input[aria-label="datetime input"]').click();
+  await page
+    .locator('#ngEventFormItem-8 input[aria-label="datetime input"]')
+    .click();
   await page.locator(`.qtip-content [aria-label^='\"2024-12-26']`).click();
 
-  await page.locator('input[aria-label="Start Time"]').fill("8:00 pm");
-  await page.locator('input[aria-label="End Time]').fill("10:00 pm");
-await page.locator(".patternButton").click();
-await page
-.locator('select:has(option[label="Weekly"])')
-.select('select:has(option[label="Weekly"][value="2")', "2");
+  await page
+    .locator('#ngEventFormItem-8 input[aria-label="Start Time"]')
+    .fill("8:00 pm");
+  await page.keyboard.press("Tab");
+  await page
+    .locator('#ngEventFormItem-8 input[aria-label="End Time"]')
+    .fill("10:00 pm");
+  await page.locator(".patternButton").click();
+  await page.select('select:has(option[label="Weekly"][value="2"])', "2");
+  await page.locator('.modal-open [aria-label="datetime input"]').click();
 
-page
-  .locator('[data-label-id="Tue"] input')
-  .filter((checkbox) => checkbox.classList.contains("ng-empty"))
-  .click();
+  const nextButton = await page.locator(
+    ".modal-open .qtip-content i.b-datepicker-button-next",
+  );
 
-page
-  .locator('[data-label-id="Thu"] input')
-  .filter((checkbox) => checkbox.classList.contains("ng-empty"))
-  .click();
+  await nextButton.click();
+  await nextButton.click();
+  await nextButton.click();
+  await nextButton.click();
+  await nextButton.click();
 
-await page.locator('.modal-open [aria-label="datetime input"]').click();
+  await page
+    .locator(`.modal-open .qtip-content [aria-label^='\"2025-05-11']`)
+    .click();
 
-let selectedMonth = await page
-  .locator(".modal-open .qtip-content .h-col-title")
-  .map((titleDiv) => titleDiv.textContent)
-  .wait();
+  const tueIsChecked = await page.$eval(
+    '.modal-content [data-label-id="Tue"] input',
+    (box) => box.checked,
+  );
+  const thuIsChecked = await page.$eval(
+    '.modal-content [data-label-id="Thu"] input',
+    (box) => box.checked,
+  );
 
-console.log(selectedMonth);
-
-await page
-.locator(`.modal-open .qtip-content [aria-label^='\"2024-12-26']`)
-.click();
-*/
+  if (!tueIsChecked) {
+    await page.locator('.modal-content [data-label-id="Tue"] label').click();
+  }
+  if (!thuIsChecked) {
+    await page.locator('.modal-content [data-label-id="Thu"] label').click();
+  }
+  await page.locator(".modal-footer ::-p-text(Select Pattern)").click();
+})();
