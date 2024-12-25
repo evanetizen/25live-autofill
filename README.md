@@ -17,9 +17,16 @@ You can check by running `node -v` to see if you have it.
 If you don't have it installed, you can find it [here](https://nodejs.org/en/)
 
 2. Next, you want to install pnpm globally. This project only works with pnpm as a package manager.
-   `npm install -g pnpm`.
+
+```bash
+npm install -g pnpm
+```
 
 3. Pull this git repository onto your computer and run `pnpm install` in the root directory of this project to install the dependencies.
+
+```bash
+pnpm install
+```
 
 4. You want to find the chromeExecutable variable at the top of script.js and change it to where the Google Chrome executable is on your computer.
 
@@ -30,12 +37,15 @@ If you want to change any of them, you edit those straight in the file.
 
 otherwise, make sure you are in the root of this project and go to the terminal and run:
 
-`node script.js`
+```bash
+node script.js
+```
 
 alternatively, you can run it with 2 command line arguments: this is useful if you found your original time didn't work by a few minutes, you can offset it.
-`node script.js [starttime] [endtime]`
 
-e.g. `node script.js 5:00 6:00`
+```bash
+node script.js 5:00 6:00
+```
 
 The script expects these two times to be in the format of 8:00 or 12:00 for example. Do not include space or 'pm', the script assumes you are booking past noon.
 
