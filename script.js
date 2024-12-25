@@ -1,5 +1,14 @@
 import puppeteer from "puppeteer-core";
 
+const activityDescription =
+  "Virginia Wushu Club practices for competition and performances.";
+const phoneNumber = "7033623105";
+const roomSearchQuery = "AFC MULTI-PURPOSE";
+const roomText1 = "AFC MULTI-PURPOSE ROOM 1";
+const roomText2 = "AFC MULTI-PURPOSE ROOM 2";
+const startTime = "8:00 pm";
+const endTime = "10:00 pm";
+
 (async () => {
   // Launch the browser and open a new blank page
   const browser = await puppeteer.launch({
@@ -48,8 +57,7 @@ import puppeteer from "puppeteer-core";
   await iframe.waitForSelector('body[contenteditable="true"]');
   await iframe.evaluate(() => {
     const editableBody = document.querySelector('body[contenteditable="true"]');
-    editableBody.innerHTML =
-      "Virginia Wushu Club practices for competition and performances.";
+    editableBody.innerHTML = activityDescription;
   });
 
   await page
@@ -62,11 +70,11 @@ import puppeteer from "puppeteer-core";
 
   await page
     .locator('#ngEventFormItem-8 input[aria-label="Start Time"]')
-    .fill("6:00 pm");
+    .fill(startTime);
   await page.keyboard.press("Tab");
   await page
     .locator('#ngEventFormItem-8 input[aria-label="End Time"]')
-    .fill("7:00 pm");
+    .fill(endTime);
   await page.locator(".patternButton").click();
   await page.select('select:has(option[label="Weekly"][value="2"])', "2");
   await page.locator('.modal-open [aria-label="datetime input"]').click();
@@ -110,19 +118,17 @@ import puppeteer from "puppeteer-core";
     .click();
   await page
     .locator('textarea[aria-label="Search Locations"]')
-    .fill("AFC MULTI-PURPOSE");
+    .fill(roomSearchQuery);
 
   await page.locator(".seriesQLSearch-btn button ::-p-text(Search)").click();
-
-  const roomText = "AFC MULTI-PURPOSE ROOM 2";
 
   try {
     const reserveButton = await Promise.race([
       page.waitForSelector(
-        `button[aria-label="Reserve Available ${roomText}"]`,
+        `button[aria-label="Reserve Available ${roomText1}"]`,
         { timeout: 10000 },
       ),
-      page.waitForSelector(`button[aria-label="Reserve ${roomText}"]`, {
+      page.waitForSelector(`button[aria-label="Reserve ${roomText1}"]`, {
         timeout: 10000,
       }),
     ]);
@@ -131,7 +137,29 @@ import puppeteer from "puppeteer-core";
       await reserveButton.click();
     }
   } catch (error) {
-    console.log("neither button appeared.");
+    console.log(
+      `neither button for ${roomtext1} appeared. It may not be available.`,
+    );
+  }
+
+  try {
+    const reserveButton = await Promise.race([
+      page.waitForSelector(
+        `button[aria-label="Reserve Available ${roomText2}"]`,
+        { timeout: 10000 },
+      ),
+      page.waitForSelector(`button[aria-label="Reserve ${roomText2}"]`, {
+        timeout: 10000,
+      }),
+    ]);
+
+    if (reserveButton) {
+      await reserveButton.click();
+    }
+  } catch (error) {
+    console.log(
+      `neither button for ${roomtext2} appeared. It may not be available.`,
+    );
   }
 
   // answer the bottom section
@@ -149,12 +177,10 @@ import puppeteer from "puppeteer-core";
     .locator(
       '#ngEventFormItem-15 input[type="text"]::-p-aria(Phone Number for primary event contact)',
     )
-    .fill("7033623105");
+    .fill(phoneNumber);
   const textAreas = await page.$$("#ngEventFormItem-15 .editable-click");
   await textAreas[0].click();
-  await textAreas[0].type(
-    "The Virginia wushu club prepares for performances and competition.",
-  );
+  await textAreas[0].type(activityDescription);
   await textAreas[1].click();
   await textAreas[1].type("n/a");
   await page.locator('[aria-label="Affirmation, Required"] label').click();
