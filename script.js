@@ -1,15 +1,13 @@
 import puppeteer from "puppeteer-core";
 
-const activityDescription =
-  "Virginia Wushu Club practices for competition and performances.";
-const phoneNumber = "7033623105";
-const roomSearchQuery = "AFC MULTI-PURPOSE";
-const roomText1 = "AFC MULTI-PURPOSE ROOM 1";
-const roomText2 = "AFC MULTI-PURPOSE ROOM 2";
-const startTime = "8:00 pm";
-const endTime = "10:00 pm";
-
 (async () => {
+  const phoneNumber = "7033623105";
+  const roomSearchQuery = "AFC MULTI-PURPOSE";
+  const roomText1 = "AFC MULTI-PURPOSE ROOM 1";
+  const roomText2 = "AFC MULTI-PURPOSE ROOM 2";
+  const startTime = "8:00 pm";
+  const endTime = "10:00 pm";
+
   // Launch the browser and open a new blank page
   const browser = await puppeteer.launch({
     executablePath: "/usr/bin/google-chrome-stable",
@@ -57,7 +55,14 @@ const endTime = "10:00 pm";
   await iframe.waitForSelector('body[contenteditable="true"]');
   await iframe.evaluate(() => {
     const editableBody = document.querySelector('body[contenteditable="true"]');
-    editableBody.innerHTML = activityDescription;
+    editableBody.innerHTML =
+      "Virginia Wushu Club practices for competition and performances.";
+    // Trigger input and change events to notify the form of the update
+    const event = new Event("input", { bubbles: true });
+    editableBody.dispatchEvent(event);
+
+    const changeEvent = new Event("change", { bubbles: true });
+    editableBody.dispatchEvent(changeEvent);
   });
 
   await page
@@ -180,7 +185,9 @@ const endTime = "10:00 pm";
     .fill(phoneNumber);
   const textAreas = await page.$$("#ngEventFormItem-15 .editable-click");
   await textAreas[0].click();
-  await textAreas[0].type(activityDescription);
+  await textAreas[0].type(
+    "The Virginia Wushu Club prepares for competition and performances.",
+  );
   await textAreas[1].click();
   await textAreas[1].type("n/a");
   await page.locator('[aria-label="Affirmation, Required"] label').click();
