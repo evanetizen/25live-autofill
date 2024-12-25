@@ -103,10 +103,26 @@ What you want to go back to instead is the "Manage Occurrences" button from abov
 is find all the occurrences without any location and press remove. This tells 25 live that
 you don't care about this date that you couldn't find a room for.
 
+# Order of Operations!
+
+So the order of operations should look like this and what the script does:
+
+1. fill out basic info at the top
+2. fill out the practice time you want and repeating date pattern (to book all of the practices)
+3. Do a location search.
+4. Click "reserve" or "reserve available" for the rooms you want.
+5. fill out the information at the bottom and hit "I agree" to the terms.
+6. Go back to "Manage Occurrences" and delete all occurrences without a location.
+7. Submit!
+
 **AFTER YOU REMOVE ALL THE DATES WITHOUT LOCATIONS, YOU SHOULD BE ABLE TO PRESS SAVE ON THE BOTTOM RIGHT**.
 
 Another small annoying bit: because you have modified the occurrences list,
 25 live thinks you are trying to search for something else. Again, hopefully you don't need to search for more locations... but in theory you could, if you were really set on finding alternative locations.
 But that entails going to the "Manage Occurrences" button and changing the occurrences you want to include in your search. It's uhhh confusing stuff.
+
+# griefing lol
+
+One interesting thing I found while playing around with this. As soon as you press "Reserve" or "Reserve Available" for a room, 25 live puts a "pending" label on this event that prevents other people from reserving the same room at the same time. This pending label, as far as I can tell, lasts about 15-25 minutes after I close the form and before it is cleared. You could, in theory, use this to block out a particular room about 15 minutes before noon to prevent anyone from aiming for it. But be careful, 25live could just as easily flush their pending events at noon and it's a free for all. Hopefully this script gives you the speed you need.
 
 Good luck out there!
