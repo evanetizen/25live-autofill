@@ -1,11 +1,14 @@
 import puppeteer from "puppeteer-core";
 
+// CHANGE THESE
 const chromeExecutable = "/usr/bin/google-chrome-stable"; // find chrome on your computer and paste the path.
-const phoneNumber = "7033623105"; // leave a phone number for school to call back about reservation inquiries.
+const phoneNumber = "000000000"; // leave a phone number for school to call back about reservation inquiries.
+
+// CHANGE THESE IF YOU WANT
 const roomSearchQuery = "SRC MULTI-PURPOSE"; // make sure this search query encompasses the two rooms you want to book.
 const roomText1 = "SRC MULTI-PURPOSE ROOM 1"; // make sure the spacing is precise here. the script uses an exact match to find the reserve button
 const roomText2 = "SRC MULTI-PURPOSE ROOM 2";
-const startDate = "2025-01-02";
+const startDate = "2025-01-14";
 const endDate = "2025-05-09"; // this should be the last day of the semester, typically they don't allow reservations after
 
 // Hopefully, you shouldn't need to edit past this point!
