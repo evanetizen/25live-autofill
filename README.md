@@ -38,16 +38,22 @@ If you want to change any of them, you edit those straight in the file.
 otherwise, make sure you are in the root of this project and go to the terminal and run:
 
 ```bash
-node script.js
+node script.js TueThu 8:00 10:00
 ```
 
-alternatively, you can run it with 2 command line arguments: this is useful if you found your original time didn't work by a few minutes, you can offset it.
+or
 
 ```bash
-node script.js 5:00 6:00
+node script.js Sat 2:00 4:00
 ```
 
-The script expects these two times to be in the format of 8:00 or 12:00 for example. Do not include space or 'pm', the script assumes you are booking past noon.
+The script expects exactly three arguments:
+
+1. A string with days of the week, some combination of Sun, Mon, Tue, Wed, Thu, Fri, Sat. Notice all of these are three letters. (e.g. TueThu, Sat, SunWedFri)
+2. A string representing the start time of the reservation. (e.g. 8:00)
+3. A string representing the end time of the reservation. (e.g. 10:00)
+
+The script expects the two times to be in the format of 8:00 or 12:00. Do not include any space or 'pm', the script assumes you are booking past noon.
 
 This should open up a Chrome window and ask you to log into NetBadge.
 Once you get into 25live, close out of any announcement windows and press the Event Form link on the top right.
@@ -62,8 +68,11 @@ Keep in mind that this means if at least one room is open once in the semester, 
 
 If the script doesn't find either of the two practice rooms available,
 it will tell you to CTRL-C and restart. You should use the command line arguments to try shifting the times.
-For example, from 8:00 to 10:00 (the default values) and run
-`node script.js 8:30 10:30`
+For example, you can rerun it with
+
+```
+node script.js TueThu 8:30 10:30
+```
 
 After it is done and you double checked what exactly you're booking, you can press save on the bottom right to submit the form.
 
