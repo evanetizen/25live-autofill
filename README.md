@@ -23,6 +23,8 @@ If you don't have it installed, you can find it [here](https://nodejs.org/en/)
 npm install -g pnpm
 ```
 
+or on Mac:
+
 ```bash
 brew install pnpm
 ```
