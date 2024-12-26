@@ -2,7 +2,7 @@
 
 A small side project. It's a script to fill out room reservations via robot ;)
 
-This script is meant to be a greedy cannon. You fire it once, and it will simply book ALL POSSIBLE availabilities in the days of the week and times you specify in 2 rooms. (the default is the two SRC Multipurpose rooms).
+This script is a greedy, single-shot cannon. You fire it once, and it will simply book ALL POSSIBLE availabilities in the days of the week and times you specify in 2 rooms. (the default is the two SRC Multipurpose rooms).
 
 Whether that means 56 practices booked or 2 practices booked, it will look at the two rooms specified
 and book all possible practices in the days and time range you specify.
@@ -17,13 +17,17 @@ This also means if that both rooms are available on any particular day, it will 
 You can check by running `node -v` to see if you have it.
 If you don't have it installed, you can find it [here](https://nodejs.org/en/)
 
-2. Next, you want to install pnpm globally. This project only works with pnpm as a package manager. You can use brew or npm to install.
+2. Next, you want to install pnpm globally. This project only works with pnpm as a package manager. Since you have node, you can use npm. But if you are mac or prefer to use another package manager, you can use that too.
 
 ```bash
 npm install -g pnpm
 ```
 
-3. Pull this git repository onto your computer and run `pnpm install` in the root directory of this project to install the dependencies.
+```bash
+brew install pnpm
+```
+
+3. Clone this git repository onto your computer and run `pnpm install` in the root directory of this project to install the dependencies.
 
 ```bash
 git clone https://github.com/evanetizen/25live-autofill.git
@@ -31,12 +35,19 @@ cd 25live-autofill
 pnpm install
 ```
 
-4. You want to find the chromeExecutable variable at the top of script.js and change it to where the Google Chrome executable is on your computer.
+4. At the top of script.js and change chromeExecutable to where the Google Chrome executable is on your computer.
+
+```js
+const chromeExecutable = "/usr/bin/google-chrome-stable"; // find chrome on your computer and paste the path.
+```
+
+To find your Chrome executable, go to `chrome://version/` in your chrome browser and copy and paste the executable path you find there.
+
+![find chrome version](images/chromeversion.png)
 
 5. There are some default settings in place at the top of script.js. Change the phone number!
 
 ```js
-const chromeExecutable = "/usr/bin/google-chrome-stable"; // find chrome on your computer and paste the path.
 const phoneNumber = "703XXXXXXX"; // leave a phone number for school to call back about reservation inquiries.
 
 const roomSearchQuery = "SRC MULTI-PURPOSE"; // make sure this search query encompasses the two rooms you want to book.
