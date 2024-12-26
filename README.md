@@ -17,7 +17,7 @@ This also means if that both rooms are available on any particular day, it will 
 You can check by running `node -v` to see if you have it.
 If you don't have it installed, you can find it [here](https://nodejs.org/en/)
 
-2. Next, you want to install pnpm globally. This project only works with pnpm as a package manager.
+2. Next, you want to install pnpm globally. This project only works with pnpm as a package manager. You can use brew or npm to install.
 
 ```bash
 npm install -g pnpm
@@ -26,7 +26,7 @@ npm install -g pnpm
 3. Pull this git repository onto your computer and run `pnpm install` in the root directory of this project to install the dependencies.
 
 ```bash
-git clone git@github.com:evanetizen/25live-autofill.git
+git clone https://github.com/evanetizen/25live-autofill.git
 cd 25live-autofill
 pnpm install
 ```
@@ -71,7 +71,7 @@ The script expects the two times to be in the format of one or two digits, follo
 This should open up a Chrome window and ask you to log into NetBadge.
 Once you get into 25live, close out of any announcement windows and press the Event Form link on the top right.
 
-![25live dash](25livedash.png)
+![25live dash](images/25livedash.png)
 
 The script will then run to fill out the form to the best of its abilities.
 The script will book all available days in the two rooms in the times you specify, whether it is one room available or both.
@@ -92,7 +92,7 @@ The 25 live form has a really confusing order of operations to it that makes it 
 
 The key player here is the "Manage Occurrences" button after you set your repeating pattern.
 
-![Manage Occurrences Button](./manageocc.png)
+![Manage Occurrences Button](images/manageocc.png)
 
 Basically, you tell 25live "These are all the practices I want to happen."
 Then you go to the Location search and find a room (or two).
@@ -107,7 +107,7 @@ It won't let you press save for these rooms and just call it a day.
 do not have a location!!! For all the days that have no location, it doesn't know what to do,
 and prevents you from submitting.
 
-![No Location for occurrences](nolocation.png)
+![No Location for occurrences](images/nolocation.png)
 
 ---
 
@@ -115,7 +115,7 @@ and prevents you from submitting.
 These are the things to manage each particular room. However, because 25live already books
 every available instance for you, there is no point in messing around with each particular room.
 
-![Do not touch this](donottouch.png)
+![Do not touch this](images/donottouch.png)
 
 What you want to go back to instead is the "Manage Occurrences" button from above.
 **MODIFY YOUR OCCURRENCES HERE**. What this script does, and what I recommend you do,
