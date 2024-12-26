@@ -13,6 +13,8 @@ const endDate = "2025-05-09"; // this should be the last day of the semester, ty
 
 // Hopefully, you shouldn't need to edit past this point!
 
+const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+
 function monthDiff(startDate, endDate) {
   let startMonth = Number(startDate.slice(5, 7));
   let endMonth = Number(endDate.slice(5, 7));
@@ -139,7 +141,9 @@ await page
   .locator('#ngEventFormItem-8 input[aria-label="datetime input"]')
   .click();
 
-const nextMonthButton = await page.locator(
+await page.waitForSelector(".qtip-content");
+
+const nextMonthButton = page.locator(
   ".qtip-content i.b-datepicker-button-next",
 );
 //for some reason, you need to click once more than expected. Dunno why this happens.
@@ -161,10 +165,15 @@ await page
   .locator('#ngEventFormItem-8 input[aria-label="End Time"]')
   .fill(endTime);
 await page.locator(".patternButton").click();
+
+await page.waitForSelector(".modal");
+
 await page.select('select:has(option[label="Weekly"][value="2"])', "2");
 await page.locator('.modal-open [aria-label="datetime input"]').click();
 
-const nextMonthButtonEnd = await page.locator(
+await page.waitForSelector(".modal-open .qtip-content");
+
+const nextMonthButtonEnd = page.locator(
   ".modal-open .qtip-content i.b-datepicker-button-next",
 );
 // for some reason, you need to click one more time than expected. Dunno why.
@@ -174,9 +183,11 @@ for (let i = 0; i <= monthDiff(startDate, endDate); i++) {
 
 await page
   .locator(
-    `.modal-open .qtip-content [aria-label^='\"${endDate}']::-p-text(${endDate.slice(8, 10)})`,
+    `.modal-open .qtip-content [aria-label^='\"${endDate.slice(0, 8)}']::-p-text(${endDate.slice(8, 10)})`,
   )
   .click();
+
+await page.waitForSelector(".qtip-content", { hidden: true });
 
 const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 for (const day of daysOfWeek) {
@@ -191,26 +202,43 @@ for (const day of daysOfWeek) {
 }
 
 await page.locator(".modal-footer ::-p-text(Select Pattern)").click();
+await page.waitForSelector(".modal", { hidden: true });
 
 // view the occurrences to give time for all of them to load before you search locations.
+await delay(3000);
 await page.locator("#viewAllOccs").click();
-await page.waitForSelector("table");
+await page.waitForSelector(".modal");
+await page.waitForSelector(".modal tbody.ngDateOccContainer");
+await delay(3000);
 await page.locator(".modal-open .modal-footer button::-p-text(Close)").click();
+await page.waitForSelector(".modal", { hidden: true });
+
+// Location search
 await page
   .locator('textarea[aria-label="Search Locations"]')
   .fill(roomSearchQuery);
-
 await page.locator(".seriesQLSearch-btn button ::-p-text(Search)").click();
+
+await delay(3000);
+
+const refreshButton = await page.$(
+  "div:not(.ng-hide) > button::-p-text(Refresh)",
+);
+
+if (refreshButton) {
+  console.log("Search needs to be refreshed. Pressing refresh.");
+  refreshButton.click();
+}
 
 let room1Available = true;
 try {
   const reserveButton = await Promise.race([
     page.waitForSelector(
       `button[aria-label="Reserve Available ${roomText1}"]`,
-      { timeout: 10000 },
+      { timeout: 5000 },
     ),
     page.waitForSelector(`button[aria-label="Reserve ${roomText1}"]`, {
-      timeout: 10000,
+      timeout: 5000,
     }),
   ]);
 
