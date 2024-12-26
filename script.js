@@ -5,46 +5,10 @@ const phoneNumber = "7033623105"; // leave a phone number for school to call bac
 const roomSearchQuery = "SRC MULTI-PURPOSE"; // make sure this search query encompasses the two rooms you want to book.
 const roomText1 = "SRC MULTI-PURPOSE ROOM 1"; // make sure the spacing is precise here. the script uses an exact match to find the reserve button
 const roomText2 = "SRC MULTI-PURPOSE ROOM 2";
-const startDate = "2025-01-14"; // make sure this is either a Tuesday or Thursday.
+const startDate = "2025-01-02";
 const endDate = "2025-05-09"; // this should be the last day of the semester, typically they don't allow reservations after
 
-let startTime = "8:00 pm"; // this is the default start time, can be changed with command line argument.
-let endTime = "10:00 pm"; // this is the default end time, can be changed with command line argument.
-
 // Hopefully, you shouldn't need to edit past this point!
-
-const dateCheck = new Date(startDate);
-if (!(dateCheck.getUTCDay() === 2 || dateCheck.getUTCDay() === 4)) {
-  console.log("The start day is not a Tuesday or Thursday.");
-  console.log(
-    "This program only works to book days repeating on Tuesday and Thursday!",
-  );
-  process.exit(1);
-}
-
-if (!(process.argv.length === 2 || process.argv.length === 4)) {
-  console.log("This program expects either no arguments or 2!");
-  process.exit(1);
-}
-if (process.argv.length === 4) {
-  if (!isValidTimePattern(process.argv[2])) {
-    console.log("First time format is wrong! e.g. 8:00 or 2:00.");
-    process.exit(1);
-  }
-  if (!isValidTimePattern(process.argv[3])) {
-    console.log("Second time format is wrong! e.g. 8:00 or 2:00.");
-    process.exit(1);
-  }
-  startTime = process.argv[2] + " pm";
-  endTime = process.argv[3] + " pm";
-}
-
-function isValidTimePattern(str) {
-  // Regular expression pattern
-  const pattern = /^(1|2|3|4|5|6|7|8|9|10|11|12):([0-5][0-9])$/;
-  // Test the string against the pattern
-  return pattern.test(str);
-}
 
 function monthDiff(startDate, endDate) {
   let startMonth = Number(startDate.slice(5, 7));
@@ -57,11 +21,70 @@ function monthDiff(startDate, endDate) {
   }
 }
 
+function isValidTimePattern(str) {
+  // Regular expression pattern
+  const pattern = /^(1|2|3|4|5|6|7|8|9|10|11|12):([0-5][0-9])$/;
+  // Test the string against the pattern
+  return pattern.test(str);
+}
+
+if (process.argv.length !== 5) {
+  console.log(
+    "This program expects 3 arguments! days to repeat, start time, end time",
+  );
+  process.exit(1);
+}
+
+const repeatDays = process.argv[2];
+let repeatDict = {
+  Sun: false,
+  Mon: false,
+  Tue: false,
+  Wed: false,
+  Thu: false,
+  Fri: false,
+  Sat: false,
+};
+// Use a regular expression to match valid day abbreviations
+const regex = /(Sun|Mon|Tue|Wed|Thu|Fri|Sat)/g;
+const matches = repeatDays.match(regex);
+if (!matches) {
+  console.error("Date string contains no valid day abbreviations");
+  process.exit(1);
+}
+// Check for unrecognized characters or sequences
+const recognizedString = matches.join("");
+if (recognizedString.length !== repeatDays.length) {
+  console.error(
+    "Date string contains unrecognized characters or invalid sequences",
+  );
+  process.exit(1);
+}
+matches.forEach((day) => {
+  repeatDict[day] = true;
+});
+
+if (!isValidTimePattern(process.argv[3])) {
+  console.error("First time format is wrong! e.g. 8:00 or 2:00.");
+  process.exit(1);
+}
+
+if (!isValidTimePattern(process.argv[4])) {
+  console.error("Second time format is wrong! e.g. 8:00 or 2:00.");
+  process.exit(1);
+}
+
+const startTime = process.argv[3] + " pm";
+const endTime = process.argv[4] + " pm";
 const today = new Date().toJSON().slice(0, 10);
+
 console.log("---------------");
 console.log(`Searching for availability in ${roomText1} and ${roomText2}`);
-console.log(`from ${startTime} to ${endTime}`);
+console.log(
+  `on ${Object.keys(repeatDict).filter((day) => repeatDict[day])} from ${startTime} to ${endTime}`,
+);
 console.log("---------------");
+
 // Launch the browser and open a new blank page
 const browser = await puppeteer.launch({
   executablePath: chromeExecutable,
@@ -152,21 +175,18 @@ await page
   )
   .click();
 
-const tueIsChecked = await page.$eval(
-  '.modal-content [data-label-id="Tue"] input',
-  (box) => box.checked,
-);
-const thuIsChecked = await page.$eval(
-  '.modal-content [data-label-id="Thu"] input',
-  (box) => box.checked,
-);
+const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+for (const day of daysOfWeek) {
+  const isChecked = await page.$eval(
+    `.modal-content [data-label-id="${day}"] input`,
+    (box) => box.checked,
+  );
 
-if (!tueIsChecked) {
-  await page.locator('.modal-content [data-label-id="Tue"] label').click();
+  if (isChecked !== repeatDict[day]) {
+    await page.locator(`.modal-content [data-label-id="${day}"] label`).click();
+  }
 }
-if (!thuIsChecked) {
-  await page.locator('.modal-content [data-label-id="Thu"] label').click();
-}
+
 await page.locator(".modal-footer ::-p-text(Select Pattern)").click();
 
 // view the occurrences to give time for all of them to load before you search locations.
@@ -274,6 +294,7 @@ while (await page.$(".ngDateOccTable button.aw-button--danger--outline")) {
 }
 
 console.log(
+  "\x1b[32m%s\x1b[0m",
   "Finished booking! You should be good to hit save in the bottom right.",
 );
 console.log(
