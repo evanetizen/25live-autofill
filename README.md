@@ -122,9 +122,9 @@ What you want to go back to instead is the "Manage Occurrences" button from abov
 is find all the occurrences without any location and press remove. This tells 25live that
 you don't care about this date that you couldn't find a room for.
 
-# Order of Operations!
+# Behind the scenes... and order of operations!
 
-So the order of operations should look like this and what the script does:
+So if you're filling out a 25Live form by hand, you should replicate the order the script performs
 
 1. fill out basic info at the top
 2. fill out the practice time you want and repeating date pattern (to book all of the practices)
