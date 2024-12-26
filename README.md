@@ -1,15 +1,16 @@
 # 25live autofill
 
-A small side project to fill out room reservations via robot ;)
+A small side project. It's a script to fill out room reservations via robot ;)
 
-Think of this script as greedy: it will reserve ALL possible available times in two rooms.
+This script is meant to be a greedy cannon. You fire it once, and it will simply book ALL POSSIBLE availabilities in the days of the week and times you specify in 2 rooms. (the default is the two SRC Multipurpose rooms).
+
 Whether that means 56 practices booked or 2 practices booked, it will look at the two rooms specified
-and book all possible practices.
+and book all possible practices in the days and time range you specify.
 
-This means that if only one of the two rooms is available, it will book all possible practice times in there.
-This also means if that both rooms are available at the practice time, it will book both rooms for that day.
+This means that if only one of the two rooms is available the whole semester, it will book all possible practice times in there.
+This also means if that both rooms are available on any particular day, it will book both rooms at the same time for that day.
 
-# Installation
+## Installation
 
 1. Make sure you have Nodejs installed so you can run Javascript on your command line.
 
@@ -25,17 +26,29 @@ npm install -g pnpm
 3. Pull this git repository onto your computer and run `pnpm install` in the root directory of this project to install the dependencies.
 
 ```bash
+git clone git@github.com:evanetizen/25live-autofill.git
+cd 25live-autofill
 pnpm install
 ```
 
 4. You want to find the chromeExecutable variable at the top of script.js and change it to where the Google Chrome executable is on your computer.
 
-# Usage
+5. There are some default settings in place at the top of script.js. Change the phone number!
 
-There are some default settings in place at the top of script.js.
-If you want to change any of them, you edit those straight in the file.
+```js
+const chromeExecutable = "/usr/bin/google-chrome-stable"; // find chrome on your computer and paste the path.
+const phoneNumber = "703XXXXXXX"; // leave a phone number for school to call back about reservation inquiries.
 
-otherwise, make sure you are in the root of this project and go to the terminal and run:
+const roomSearchQuery = "SRC MULTI-PURPOSE"; // make sure this search query encompasses the two rooms you want to book.
+const roomText1 = "SRC MULTI-PURPOSE ROOM 1"; // make sure the spacing is precise here. the script uses an exact match to find the reserve button
+const roomText2 = "SRC MULTI-PURPOSE ROOM 2";
+const startDate = "2025-01-02"; // sets the initial date of the repeated pattern.
+const endDate = "2025-05-09"; // this should be the last day of the semester, typically they don't allow reservations after
+```
+
+## Usage
+
+To run the script, make sure you are in the root of this project and go to the terminal and run:
 
 ```bash
 node script.js TueThu 8:00 10:00
@@ -49,11 +62,11 @@ node script.js Sat 2:00 4:00
 
 The script expects exactly three arguments:
 
-1. A string with days of the week, some combination of Sun, Mon, Tue, Wed, Thu, Fri, Sat. Notice all of these are three letters. (e.g. TueThu, Sat, SunWedFri)
+1. A string with days of the week. Some combination of Sun, Mon, Tue, Wed, Thu, Fri, Sat. Notice all of these units are three letters. (e.g. TueThu, Sat, SunWedFri)
 2. A string representing the start time of the reservation. (e.g. 8:00)
 3. A string representing the end time of the reservation. (e.g. 10:00)
 
-The script expects the two times to be in the format of 8:00 or 12:00. Do not include any space or 'pm', the script assumes you are booking past noon.
+The script expects the two times to be in the format of one or two digits, followed by a colon, followed by two digits, such as 8:30 or 12:15. Do not include 'pm', the script assumes you are booking past noon.
 
 This should open up a Chrome window and ask you to log into NetBadge.
 Once you get into 25live, close out of any announcement windows and press the Event Form link on the top right.
@@ -61,22 +74,19 @@ Once you get into 25live, close out of any announcement windows and press the Ev
 ![25live dash](25livedash.png)
 
 The script will then run to fill out the form to the best of its abilities.
-The script will book all available times in the two rooms you specify,
-whether it is one room available or both.
+The script will book all available days in the two rooms in the times you specify, whether it is one room available or both.
 
-Keep in mind that this means if at least one room is open once in the semester, this script may only book that one practice. Double check the occurrences.
+Keep in mind that this script may only book a few practices if there's a lot of conflicts. So double check the occurrences before you submit to make sure you are happy with the results.
 
-If the script doesn't find either of the two practice rooms available,
-it will tell you to CTRL-C and restart. You should use the command line arguments to try shifting the times.
-For example, you can rerun it with
+If the script doesn't find either of the two practice rooms available, it will tell you to CTRL C and restart from the command line. Before you CTRL C, I encourage you to view "Conflict Details" to see what's conflicting with your desired times. If you can book around the conflict, I encourage you to CTRL C and run the script again with a slightly offset time:
 
 ```
 node script.js TueThu 8:30 10:30
 ```
 
-After it is done and you double checked what exactly you're booking, you can press save on the bottom right to submit the form.
+The script will never save and submit the form by itself. Always check "Manage Occurrences" to make sure you have a general idea of what you are booking. Press the save button in the bottom right to submit!
 
-# 25 Live Tips:
+## 25 Live Tips:
 
 The 25 live form has a really confusing order of operations to it that makes it easy to be confused as to why it won't submit.
 
@@ -109,7 +119,7 @@ every available instance for you, there is no point in messing around with each 
 
 What you want to go back to instead is the "Manage Occurrences" button from above.
 **MODIFY YOUR OCCURRENCES HERE**. What this script does, and what I recommend you do,
-is find all the occurrences without any location and press remove. This tells 25 live that
+is find all the occurrences without any location and press remove. This tells 25live that
 you don't care about this date that you couldn't find a room for.
 
 # Order of Operations!
@@ -126,12 +136,10 @@ So the order of operations should look like this and what the script does:
 
 **AFTER YOU REMOVE ALL THE DATES WITHOUT LOCATIONS, YOU SHOULD BE ABLE TO PRESS SAVE ON THE BOTTOM RIGHT**.
 
-Another small annoying bit: because you have modified the occurrences list,
-25 live thinks you are trying to search for something else. Again, hopefully you don't need to search for more locations... but in theory you could, if you were really set on finding alternative locations.
-But that entails going to the "Manage Occurrences" button and changing the occurrences you want to include in your search. It's uhhh confusing stuff.
+Another small annoying bit: because you have modified the occurrences list, 25 live thinks you are trying to search for something else. Again, hopefully you don't need to search for more locations... but in theory you could, if you were really set on finding alternative locations. But that entails going to the "Manage Occurrences" button and changing the occurrences you want to include in your search. It's uhhh confusing stuff.
 
-# griefing lol
+## griefing lol
 
-One interesting thing I found while playing around with this. As soon as you press "Reserve" or "Reserve Available" for a room, 25 live puts a "pending" label on this event that prevents other people from reserving the same room at the same time. This pending label, as far as I can tell, lasts about 15-25 minutes after I close the form and before it is cleared. You could, in theory, use this to block out a particular room about 15 minutes before noon to prevent anyone from aiming for it. But be careful, 25live could just as easily flush their pending events at noon and it's a free for all. Hopefully this script gives you the speed you need.
+One interesting thing I found while playing around with this: as soon as you press "Reserve" or "Reserve Available" for a room, 25 live puts a "pending" label on this event that prevents other people from reserving the same room at the same time. This pending label, as far as I can tell, lasts about 15-25 minutes after I close the form and before it is cleared. You could, in theory, use this to block out a particular room about 15 minutes before noon to prevent anyone from aiming for it. But be careful, 25live could just as easily flush their pending events at noon and it's a free for all. Hopefully this script gives you the speed you need.
 
 Good luck out there!
